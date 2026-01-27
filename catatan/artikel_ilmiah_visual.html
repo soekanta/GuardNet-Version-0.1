@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artikel Ilmiah - GuardNet (Visual)</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --surface: #ffffff;
+            --background: #f8fafc;
+            --text-main: #1e293b;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--text-main);
+            background: var(--background);
+            margin: 0;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--surface);
+            padding: 2rem 3rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        /* Typography */
+        h1,
+        h2,
+        h3 {
+            color: #0f172a;
+            margin-top: 2rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 1rem;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            color: var(--primary);
+            border-left: 4px solid var(--primary);
+            padding-left: 1rem;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+        }
+
+        blockquote {
+            background: #f1f5f9;
+            border-left: 4px solid var(--text-secondary);
+            margin: 1.5rem 0;
+            padding: 1rem;
+            color: var(--text-secondary);
+        }
+
+        /* Weakness Section Highlight */
+        .weakness-box {
+            border: 1px solid var(--danger);
+            background: #fef2f2;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .weakness-title {
+            color: var(--danger);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.95rem;
+        }
+
+        th,
+        td {
+            border: 1px solid var(--border);
+            padding: 0.75rem;
+            text-align: left;
+        }
+
+        th {
+            background: #f8fafc;
+            font-weight: 600;
+        }
+
+        /* Mermaid Diagrams */
+        .mermaid {
+            display: flex;
+            justify-content: center;
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+
+        .author-box {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div id="content"></div>
+    </div>
+
+    <script>
+        const contentPart1 = `
+# IMPLEMENTASI DETEKSI PENIPUAN TAUTAN PALSU SECARA LANGSUNG MENGGUNAKAN LOGISTIC REGRESSION PADA CHROME EXTENSION
+
+<div class="author-box">
+    <strong>Wahyu Soekanta Ginting, Katrin Wijaya, Nuragustyani</strong><br>
+    Program Studi Sistem Informasi<br>
+    Universitas Prima Indonesia
+</div>
+
+## 1. Abstrak
+Penelitian ini bertujuan mengembangkan sistem keamanan *client-side* bernama **GuardNet**. Berbeda dengan pendekatan tradisional yang bergantung pada *blacklist* statis, GuardNet menggunakan **Logistic Regression** yang berjalan di dalam peramban untuk menganalisis karakteristik URL secara *real-time*. Meski efektif untuk url umum, penelitian ini juga menyoroti keterbatasan teknis browser modern (CORS) yang mempengaruhi akurasi pada kasus tertentu.
+
+## 2. Metodologi Sistem
+Sistem mengekstrak 50 fitur unik yang dibagi menjadi dua kategori:
+1.  **Fitur Leksikal (URL)**: Panjang URL, jumlah subdomain, HTTPS, entropi karakter.
+2.  **Fitur Konten (DOM)**: Keberadaan form password, external links, favicon, dan copyright.
+
+### Arsitektur Pemrosesan Data
+Alur data berjalan sepenuhnya di lokal pengguna untuk menjaga privasi.
+`;
+
+        const contentPart2 = `
+## 3. Hasil Implementasi
+Ekstensi berhasil mengintegrasikan model TensorFlow.js yang telah dilatih dengan dataset **PhiUSIIL**.
+
+### Demonstrasi Alur Deteksi
+1.  **Input**: Pengguna mengunjungi \`pplink.club\`.
+2.  **Ekstraksi**: Sistem mendeteksi fitur mencurigakan (tidak ada HTTPS, domain aneh).
+3.  **Prediksi**: Model memberikan skor phishing 99%.
+4.  **Output**: Layar merah peringatan muncul.
+
+## 4. Analisis Kelemahan & Keterbatasan Sistem
+Meskipun sistem berjalan dengan baik pada skenario pengujian standar, terdapat beberapa kelemahan fundamental yang ditemukan selama pengujian lapangan.
+
+### 4.1 Bias Dataset Geografis (Kasus .co.id)
+<div class="weakness-box">
+    <div class="weakness-title">⚠️ Bias Domestik</div>
+    <p>
+        Dataset pelatihan (PhiUSIIL) didominasi oleh domain global (.com, .net, .org). Domain spesifik negara seperti <code>.co.id</code> atau <code>.ac.id</code> sangat jarang muncul di data latih (minoritas). 
+    </p>
+    <p>
+        <strong>Dampak:</strong> Model mungkin mempelajari bias bahwa "domain yang tidak dikenal = aneh/berbahaya". Akibatnya, situs sah pemerintahan atau kampus lokal Indonesia berisiko terdeteksi sebagai anomali (False Positive) hanya karena ekstensi domainnya tidak awam bagi model.
+    </p>
+</div>
+
+### 4.2 Keterbatasan Browser Security (Masalah CORS)
+<div class="weakness-box">
+    <div class="weakness-title">🛑 Masalah Akses Konten (Kasus uni-mainz.de)</div>
+    <p>
+        Browser modern menerapkan kebijakan <em>Same-Origin Policy</em> dan <em>CORS</em> yang ketat. Ekstensi browser tidak selalu diizinkan membaca isi (HTML) dari sebuah website, terutama yang memiliki sekuriti tinggi (seperti <code>uni-mainz.de</code>).
+    </p>
+    <p>
+        <strong>Dampak Fatal:</strong>
+        Saat konten gagal dibaca, ekstraktor fitur di <code>sandbox.js</code> mengembalikan nilai <strong>0 (NOL)</strong> untuk semua 28 fitur berbasis konten (Tidak ada Title, Tidak ada Ikon, Tidak ada Teks).
+        <br><br>
+        Bagi model Logistic Regression, <strong>"Halaman Kosong"</strong> adalah tanda kuat situs palsu/rusak. Inilah yang menyebabkan skor risiko melonjak menjadi <strong>100% (Merah)</strong> padahal situs tersebut aman. Ini adalah kelemahan arsitektur <em>client-side</em> murni.
+    </p>
+</div>
+
+### 4.3 Sensitivitas Normalisasi Data
+<div class="weakness-box">
+    <div class="weakness-title">📈 Skala Ekstrem</div>
+    <p>
+        Model menggunakan <em>StandardScaler</em> yang sangat sensitif terhadap nilai rata-rata. 
+        Fitur seperti "Panjang URL" dilatih dengan rata-rata ~50 karakter. Jika pengguna mengunjungi URL super pendek atau super panjang, hasil normalisasi bisa menghasilkan angka ekstrem (misal: -5.0 atau +10.0).
+    </p>
+    <p>
+        Pada algoritma Logistic Regression, nilai input ekstrem ini akan didorong oleh fungsi <em>Sigmoid</em> ke probabilitas 0% atau 100% secara instan, menghilangkan nuansa "Waspada" (Kuning).
+    </p>
+</div>
+
+## 5. Kesimpulan & Saran
+GuardNet membuktikan bahwa deteksi phishing berbasis AI bisa dilakukan di browser. Namun, untuk penggunaan produksi yang stabil, sistem harus:
+1.  Menambahkan data latih lokal (domain Indonesia).
+2.  Menggunakan metode <em>Hybrid</em>: Gunakan API server-side untuk memindai konten jika akses lokal terblokir CORS.
+`;
+
+        const mermaidGraph = `
+<div class="mermaid">
+graph LR
+    User[User] -->|Visit URL| BG[Background Script]
+    BG -->|Inject Script| Page[Web Page]
+    
+    subgraph "Sistem Lokal (Extension)"
+        Page -.->|Blocked by CORS| Fail[Konten Gagal Dibaca]
+        Page -->|Success| Content[HTML Content]
+        
+        Content --> Extractor[Feature Extractor]
+        Fail -->|Fitur Bernilai 0| Extractor
+        
+        Extractor -->|50 Fitur| Model[Logistic Regression]
+        Model -->|Prediksi| Result[Skor Risiko]
+    end
+    
+    Result --> UI[Popup Alert]
+    
+    style Fail fill:#fecaca,stroke:#ef4444,stroke-width:2px
+    style Result fill:#dbeafe,stroke:#2563eb
+</div>
+`;
+
+        // Render contents
+        const html1 = marked.parse(contentPart1);
+        const html2 = marked.parse(contentPart2);
+
+        document.getElementById('content').innerHTML = html1 + mermaidGraph + html2;
+
+        mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+    </script>
+</body>
+
+</html>

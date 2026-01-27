@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GuardNet Project Context for AI Analysis</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --bg-color: #f4f6f7;
+            --text-color: #333;
+            --code-bg: #e8e8e8;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: var(--primary-color);
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        h1 {
+            border-bottom: 4px solid var(--accent-color);
+        }
+
+        .section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        code {
+            background-color: var(--code-bg);
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            color: #d35400;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 5px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            color: white;
+            font-weight: bold;
+        }
+
+        .tag.core {
+            background-color: var(--accent-color);
+        }
+
+        .tag.warn {
+            background-color: var(--warning-color);
+        }
+
+        .tag.err {
+            background-color: var(--danger-color);
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="section">
+        <h1>GuardNet Project Context</h1>
+        <p><strong>Version:</strong> Test 1.2 (Development Phase)</p>
+        <p><strong>Goal:</strong> Dokumen ini bertujuan untuk memberikan konteks lengkap kepada AI (LLM) tentang
+            arsitektur, tujuan, dan status proyek GuardNet saat ini agar dapat dilakukan analisis mendalam.</p>
+    </header>
+
+    <div class="section">
+        <h2>1. Identitas Proyek</h2>
+        <ul>
+            <li><strong>Nama:</strong> GuardNet (GuardNet Test 1.2)</li>
+            <li><strong>Jenis:</strong> Chrome Browser Extension (Manifest V3)</li>
+            <li><strong>Fokus Utama:</strong> Deteksi Phishing Real-time berbasis AI (Client-side).</li>
+            <li><strong>Teknologi Inti:</strong> JavaScript, TensorFlow.js, HTML/CSS.</li>
+            <li><strong>Tim Pengembang:</strong> Wahyu Soekanta Ginting, Katrin Wijaya, Nuragustyani.</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>2. Architecture Overview</h2>
+        <p>GuardNet menggunakan arsitektur modern <strong>Manifest V3</strong> dengan pendekatan privasi-first (offline
+            analysis). Berikut adalah alur data utamanya:</p>
+
+        <h3>Komponen Utama:</h3>
+        <ul>
+            <li><strong>Background Service Worker (<code>background.js</code>):</strong> Mengatur event browser, tetapi
+                karena Manifest V3 tidak persisten, ia mendelegasikan tugas berat ke Offscreen/Sandbox.</li>
+            <li><strong>UI Logic (<code>scan.js</code> & <code>scan.html</code>):</strong> Antarmuka utama yang
+                berinteraksi dengan pengguna. Memicu proses scan.</li>
+            <li><strong>Sandbox Environment (<code>sandbox.js</code> & <code>sandbox.html</code>):</strong> Jantung
+                komputasi. Di sinilah model TensorFlow.js dimuat dan dijalankan. Diisolasi dalam iframe sandbox untuk
+                keamanan CSP (Content Security Policy) dan agar bisa menjalankan `eval` atau fungsi WASM jika diperlukan
+                oleh library ML.</li>
+            <li><strong>Model AI:</strong> Model Keras/TensorFlow yang di-export ke format TFJS (disimpan di folder
+                <code>models/</code>). Model ini mengklasifikasikan URL berdasarkan 50 fitur numerik.</li>
+        </ul>
+
+        <h3>Alur Kerja (Data Flow):</h3>
+        <ol>
+            <li>User membuka website atau klik tombol scan di <code>scan.html</code>.</li>
+            <li><code>scan.js</code> mengambil URL dan konten HTML dari tab aktif.</li>
+            <li>Data dikirim via <code>postMessage</code> ke iframe tersembunyi (<code>sandbox.html</code>).</li>
+            <li><code>sandbox.js</code> melakukan:
+                <ul>
+                    <li><strong>Feature Extraction:</strong> Mengekstrak 50 fitur numerik (panjang URL, adanya simbol @,
+                        jumlah iframe, status HTTPS, dll).</li>
+                    <li><strong>Inference:</strong> Mengumpankan fitur ke model TensorFlow.js.</li>
+                </ul>
+            </li>
+            <li>Model mengembalikan skor prediksi (0.0 - 1.0).</li>
+            <li>Hasil dikirim kembali ke <code>scan.js</code> untuk ditampilkan ke user (Aman/Warning/Phishing).</li>
+        </ol>
+    </div>
+
+    <div class="section">
+        <h2>3. Fitur Utama & Kapabilitas</h2>
+        <ul>
+            <li><span class="tag core">Privacy First</span> Analisis dilakukan 100% di browser user (lokal). Tidak ada
+                data browsing yang dikirim ke cloud server.</li>
+            <li><span class="tag core">Hybrid Analysis</span> Menggabungkan analisis heuristik (pola URL) dan Machine
+                Learning (konten halaman).</li>
+            <li><span class="tag core">Real-time Feedback</span> Memberikan hasil scan instan dengan indikator visual
+                (Hijau, Kuning, Merah).</li>
+            <li><span class="tag core">Feature Rich</span> Menganalisis 50 titik data (features) dari setiap halaman
+                yang dikunjungi.</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>4. Tantangan & Batasan Saat Ini (Current Limitations)</h2>
+        <p>Poin-poin ini penting untuk diketahui oleh AI saat melakukan debugging atau optimasi:</p>
+        <ul>
+            <li><span class="tag err">CORS Issues</span> <strong>Masalah Utama:</strong> Browser memblokir ekstensi
+                untuk membaca konten HTML (DOM) dari website tertentu yang memiliki kebijakan CORS ketat (contoh:
+                <code>uni-mainz.de</code>). <br><strong>Dampak:</strong> Ekstensi membaca halaman sebagai "kosong" ->
+                Fitur dianggap 0 -> Model memprediksi Phishing (False Positive).</li>
+            <li><span class="tag warn">Dataset Bias</span> Model dilatih dominan dengan dataset global. Website lokal
+                (misal: domain <code>.co.id</code>) atau website dengan paywall (seperti <code>kompas.id</code>) kadang
+                terdeteksi sebagai anomali (Warning/Red) padahal aman.</li>
+            <li><span class="tag warn">Model Compatibility</span> Isu kompatibilitas antara versi export Keras 3.x dan
+                runtime TensorFlow.js di browser (sedang/sudah ditangani dengan patch manual pada
+                <code>model.json</code>).</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>5. Peta Jalan Pengembangan (Roadmap)</h2>
+        <p>Rencana kerja (Todo List) untuk iterasi berikutnya:</p>
+        <ul>
+            <li><strong>Improvement:</strong> Menyempurnakan mekanisme handling CORS (mungkin menggunakan
+                <code>offscreen document</code> API lebih dalam atau teknik injection script yang lebih robust).</li>
+            <li><strong>Testing:</strong> Memperluas skenario testing dengan URL lokal Indonesia untuk mengurangi bias.
+            </li>
+            <li><strong>UX:</strong> Menambahkan fitur "Whitelist" agar user bisa menandai situs aman secara manual
+                untuk menghindari False Positive berulang.</li>
+            <li><strong>Refinement:</strong> Kalibrasi ulang threshold skor risiko (Hijau: 0-25%, Kuning: 26-50%, Merah:
+                51-100%).</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>6. Struktur File Penting</h2>
+        <pre>
+/root
+├── manifest.json       # Konfigurasi ekstensi (Permissions, Background, Sandbox)
+├── scan.js             # Logic UI utama (Popup interaksi)
+├── scan.html           # Tampilan UI Popup
+├── sandbox.js          # Logic inti ML (Feature Extraction + TFJS Inference)
+├── sandbox.html        # Container terisolasi untuk menjalankan model ML
+├── background.js       # Service worker (Event listener)
+├── models/             # Folder berisi file model (model.json, group shards)
+└── catatan/            # Dokumentasi proyek & referensi
+        </pre>
+    </div>
+
+</body>
+
+</html>

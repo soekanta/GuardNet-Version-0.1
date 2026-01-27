@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hybrid Phishing Detection: Logistic Regression + Random Forest</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-light: #3b82f6;
+            --surface: #ffffff;
+            --background: #f8fafc;
+            --text-main: #1e293b;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #06b6d4;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.7;
+            color: var(--text-main);
+            background: var(--background);
+            margin: 0;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--surface);
+            padding: 2.5rem 3.5rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        /* Typography */
+        h1,
+        h2,
+        h3,
+        h4 {
+            color: #0f172a;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 1rem;
+            margin-top: 0;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            color: var(--primary);
+            border-left: 4px solid var(--primary);
+            padding-left: 1rem;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            color: #334155;
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+        }
+
+        hr {
+            border: none;
+            height: 1px;
+            background: var(--border);
+            margin: 2rem 0;
+        }
+
+        /* Links */
+        a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Code Blocks */
+        pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1.25rem;
+            border-radius: 10px;
+            overflow-x: auto;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.9em;
+        }
+
+        :not(pre)>code {
+            background: #f1f5f9;
+            padding: 0.2em 0.5em;
+            border-radius: 4px;
+            color: #e11d48;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.95rem;
+        }
+
+        th,
+        td {
+            border: 1px solid var(--border);
+            padding: 0.875rem 1rem;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(to bottom, #f8fafc, #f1f5f9);
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        /* Lists */
+        ul,
+        ol {
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin: 0.5rem 0;
+        }
+
+        /* Mermaid Diagrams */
+        .mermaid {
+            display: flex;
+            justify-content: center;
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+            border: 1px solid var(--border);
+        }
+
+        /* Blockquotes / Alerts */
+        blockquote {
+            margin: 1.5rem 0;
+            padding: 1rem 1.25rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--info);
+            background: #f0f9ff;
+        }
+
+        blockquote.note {
+            border-left-color: var(--info);
+            background: #f0f9ff;
+        }
+
+        blockquote.important {
+            border-left-color: var(--primary);
+            background: #eff6ff;
+        }
+
+        blockquote.warning {
+            border-left-color: var(--warning);
+            background: #fffbeb;
+        }
+
+        blockquote p {
+            margin: 0;
+        }
+
+        blockquote strong {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Badge/Tag Styles */
+        .badge {
+            display: inline-block;
+            padding: 0.25em 0.6em;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 4px;
+            margin-right: 0.5rem;
+        }
+
+        .badge-new {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-modify {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        /* Features */
+        .feature-list {
+            display: grid;
+            gap: 0.5rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .feature-item::before {
+            content: "✓";
+            color: var(--success);
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div id="content"></div>
+    </div>
+
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'neutral',
+            flowchart: {
+                curve: 'basis',
+                padding: 20
+            }
+        });
+
+        // Content parts
+        const part1 = `
+# Hybrid Phishing Detection: Logistic Regression + Random Forest
+
+## Background & Goal
+
+GuardNet saat ini menggunakan model **Logistic Regression** (dikemas dalam TensorFlow.js sebagai Single-Layer Neural Network dengan sigmoid activation) untuk mendeteksi phishing URL. Model ini sudah berjalan sepenuhnya di sisi klien dengan 50 fitur yang diekstrak dari URL dan konten halaman.
+
+**Tujuan**: Menambahkan model **Random Forest** sebagai pengklasifikasi pendukung untuk membentuk sistem **hybrid** yang mengurangi false positive dan false negative.
+
+---
+
+## Arsitektur Hybrid yang Diusulkan
+`;
+
+        const part2 = `
+---
+
+## Proposed Changes
+
+### Component 1: Random Forest Implementation
+
+#### <span class="badge badge-new">NEW</span> random_forest.js
+
+Implementasi Random Forest murni JavaScript tanpa library eksternal:
+
+\`\`\`javascript
+// Struktur Decision Tree Node
+{
+  "featureIndex": 5,     // Index fitur untuk split
+  "threshold": 0.5,      // Nilai threshold untuk split
+  "left": {...},         // Node kiri (≤ threshold)
+  "right": {...},        // Node kanan (> threshold)
+  "value": [0.8, 0.2]    // Probabilitas [legit, phishing] untuk leaf node
+}
+\`\`\`
+
+**Fitur utama:**
+- Traversal decision tree dengan \`O(log n)\` complexity
+- Support untuk multiple trees dengan majority voting
+- Output probabilitas dengan confidence score
+- Ukuran file target: < 50KB
+
+---
+
+#### <span class="badge badge-new">NEW</span> models/rf_model.json
+
+File JSON berisi struktur Random Forest:
+
+\`\`\`json
+{
+  "n_estimators": 10,
+  "max_depth": 5,
+  "feature_names": ["URLLength", "DomainLength", ...],
+  "trees": [
+    {
+      "featureIndex": 0,
+      "threshold": 45.5,
+      "left": { ... },
+      "right": { ... }
+    }
+  ]
+}
+\`\`\`
+
+**Rekomendasi hyperparameter untuk browser:**
+
+| Parameter | Nilai | Alasan |
+|-----------|-------|--------|
+| \`n_estimators\` | 10-20 | Balance antara akurasi dan ukuran file |
+| \`max_depth\` | 4-6 | Mencegah overfitting, menjaga ukuran kecil |
+| \`min_samples_split\` | 10 | Generalisasi lebih baik |
+
+---
+
+### Component 2: Hybrid Prediction Engine
+
+#### <span class="badge badge-modify">MODIFY</span> sandbox.js
+
+Modifikasi fungsi \`predict()\` untuk mengintegrasikan hybrid voting:
+
+**Perubahan utama:**
+
+1. **Import Random Forest classifier**
+2. **Jalankan kedua model secara paralel**
+3. **Implementasi confidence-based voting**
+
+**Logika Hybrid Voting:**
+
+\`\`\`javascript
+// Pseudo-code untuk hybrid decision
+function hybridPredict(features) {
+    const lrScore = logisticRegression.predict(features);
+    const rfScore = randomForest.predict(features);
+    
+    const lrConfidence = Math.abs(lrScore - 0.5) * 2; // 0-1 scale
+    const rfConfidence = Math.abs(rfScore - 0.5) * 2;
+    
+    // Weighted average berdasarkan confidence
+    const totalConfidence = lrConfidence + rfConfidence;
+    const finalScore = (lrScore * lrConfidence + rfScore * rfConfidence) 
+                       / totalConfidence;
+    
+    // Agreement bonus: Jika kedua model setuju, tingkatkan confidence
+    if ((lrScore > 0.5) === (rfScore > 0.5)) {
+        // Models agree - use weighted average
+        return finalScore;
+    } else {
+        // Models disagree - use the more confident one
+        return lrConfidence > rfConfidence ? lrScore : rfScore;
+    }
+}
+\`\`\`
+
+**Tiga strategi voting yang didukung:**
+
+| Strategi | Deskripsi | Use Case |
+|----------|-----------|----------|
+| \`weighted_average\` | Rata-rata tertimbang berdasarkan confidence | Default, balanced |
+| \`max_confidence\` | Gunakan model dengan confidence tertinggi | Ketika satu model lebih reliable |
+| \`unanimous\` | Kedua model harus setuju untuk klasifikasi positif | High precision |
+
+---
+
+## Technical Recommendations
+
+### 1. Menjaga Random Forest Tetap Ringan
+
+\`\`\`python
+# Training script untuk RF ringan (Python)
+from sklearn.ensemble import RandomForestClassifier
+import json
+
+rf = RandomForestClassifier(
+    n_estimators=10,       # Sedikit trees
+    max_depth=5,           # Kedalaman dangkal
+    min_samples_leaf=20,   # Hindari leaf node kecil
+    random_state=42
+)
+rf.fit(X_train, y_train)
+
+# Export ke JSON
+def tree_to_json(tree, feature_names):
+    # Recursive function untuk konversi sklearn tree ke JSON
+    ...
+\`\`\`
+
+### 2. Struktur File yang Dihasilkan
+
+\`\`\`
+models/
+├── model.json          # TensorFlow.js (Logistic Regression) - existing
+├── scaler_params.json  # StandardScaler params - existing
+├── rf_model.json       # Random Forest trees - NEW (~30-50KB)
+└── group1-shard1of1.bin  # TF.js weights - existing
+\`\`\`
+
+### 3. Performance Budget
+
+| Metric | Target | Actual (Estimated) |
+|--------|--------|-------------------|
+| Total model size | < 100KB | ~55KB |
+| Prediction time | < 100ms | ~20-30ms |
+| Memory usage | < 5MB | ~2-3MB |
+
+---
+
+## Verification Plan
+
+### Automated Testing
+
+> **📝 NOTE**
+> 
+> Karena ini adalah Chrome Extension tanpa unit test framework yang ada, verifikasi akan dilakukan secara manual melalui browser.
+
+### Manual Verification Steps
+
+1. **Load Extension di Chrome:**
+   - Buka \`chrome://extensions/\`
+   - Enable "Developer mode"
+   - Click "Load unpacked" → pilih folder \`GuardNet Test 1.2\`
+
+2. **Test dengan URL Phishing yang Diketahui:**
+   - Navigasi ke URL phishing dari [PhishTank](https://phishtank.org)
+   - Verifikasi bahwa scan page muncul dengan hasil "Phishing" 
+   - Periksa Console log untuk melihat output kedua model
+
+3. **Test dengan URL Legitimate:**
+   - Navigasi ke: \`https://example.com\`, \`https://google.com\`
+   - Verifikasi hasil "Safe" dengan confidence tinggi
+
+4. **Verifikasi Hybrid Output di Console:**
+   \`\`\`
+   [Sandbox] LR Score: 0.75, RF Score: 0.68
+   [Sandbox] LR Confidence: 0.50, RF Confidence: 0.36
+   [Sandbox] Hybrid Final Score: 0.72
+   \`\`\`
+
+5. **Test Performa:**
+   - Gunakan Chrome DevTools Performance tab
+   - Verify prediction time < 100ms
+
+### Test URLs yang Direkomendasikan
+
+| URL | Expected Result | Purpose |
+|-----|-----------------|---------|
+| \`http://192.168.1.1/login\` | Phishing (High) | IP-based URL |
+| \`https://paypal.com.fake-site.xyz\` | Phishing (High) | Brand impersonation |
+| \`https://example.com\` | Safe | Legitimate domain |
+| \`https://netgear.com\` | Safe/Warning | Edge case test |
+
+---
+
+## Batasan & Catatan
+
+> **⚠️ IMPORTANT**
+>
+> Model Random Forest harus di-training secara terpisah menggunakan Python dengan dataset yang sama (\`PhiUSIIL_Phishing_URL_Dataset.csv\`). File \`rf_model.json\` perlu digenerate dari script training.
+
+> **⚠️ WARNING**
+>
+> Untuk tahap implementasi awal, saya akan membuat struktur kode dan **placeholder RF model** dengan beberapa decision trees hardcoded. Model RF yang optimal memerlukan training terpisah.
+
+---
+
+## Pertanyaan untuk User
+
+1. Apakah Anda memiliki preferensi untuk strategi voting default? (\`weighted_average\`, \`max_confidence\`, atau \`unanimous\`)
+
+2. Apakah Anda ingin saya juga membuat script Python untuk training Random Forest dan mengexport ke JSON?
+
+3. Berapa jumlah estimator (trees) maksimal yang Anda inginkan? (Saya rekomendasikan 10-15 untuk balance performa dan akurasi)
+`;
+
+        // Mermaid diagram
+        const mermaidDiagram = `
+<div class="mermaid">
+flowchart TD
+    A[Input URL + Features] --> B[Feature Extraction]
+    B --> C[StandardScaler Normalization]
+    C --> D[Logistic Regression<br/>TensorFlow.js]
+    C --> E[Random Forest<br/>Pure JavaScript]
+    D --> F{Confidence Check}
+    E --> G{Confidence Check}
+    F --> H[Hybrid Voting Engine]
+    G --> H
+    H --> I[Final Decision<br/>Safe / Warning / Phishing]
+</div>
+`;
+
+        // Render markdown
+        const html1 = marked.parse(part1);
+        const html2 = marked.parse(part2);
+
+        // Combine content
+        document.getElementById('content').innerHTML = html1 + mermaidDiagram + html2;
+
+        // Initialize Mermaid after DOM is ready
+        mermaid.run();
+    </script>
+</body>
+
+</html>

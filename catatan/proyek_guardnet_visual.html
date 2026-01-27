@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dokumentasi Proyek GuardNet</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --surface: #ffffff;
+            --background: #f8fafc;
+            --text-main: #1e293b;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--text-main);
+            background: var(--background);
+            margin: 0;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--surface);
+            padding: 2rem 3rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        /* Typography */
+        h1,
+        h2,
+        h3 {
+            color: #0f172a;
+            margin-top: 2rem;
+        }
+
+        h1 {
+            font-size: 2.25rem;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        h3 {
+            font-size: 1.25rem;
+        }
+
+        /* Links */
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Code Blocks */
+        pre {
+            background: #1e293b;
+            color: #f1f5f9;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+
+        code {
+            font-family: monospace;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        th,
+        td {
+            border: 1px solid var(--border);
+            padding: 0.75rem;
+            text-align: left;
+        }
+
+        th {
+            background: #f1f5f9;
+            font-weight: 600;
+        }
+
+        /* Mermaid Diagrams */
+        .mermaid {
+            display: flex;
+            justify-content: center;
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div id="content"></div>
+    </div>
+
+    <script>
+        // Split content to safely inject Mermaid
+        const markdownPart1 = `
+# Dokumentasi Proyek GuardNet (PlanFix)
+
+Dokumen ini merangkum rencana implementasi, struktur proyek, dan panduan penggunaan untuk pengembangan Ekstensi Chrome GuardNet.
+
+## 1. Tujuan Proyek
+Membuat ekstensi Chrome yang mampu mendeteksi URL phishing secara *real-time* menggunakan model Machine Learning (TensorFlow.js) yang berjalan sepenuhnya di sisi klien (offline-capable).
+
+## 2. Arsitektur Teknis
+Karena kebijakan keamanan Chrome Manifest V3 yang ketat (Content Security Policy), kita menggunakan arsitektur **Offscreen Document** dan **Sandbox** untuk menjalankan model TensorFlow.js.
+
+### Diagram Alur Kerja
+`;
+
+        const markdownPart2 = `
+## 3. Implementasi Fitur (50 Fitur)
+Model membutuhkan 50 fitur numerik sebagai input. Fitur ini diekstrak dari **URL** dan **Konten Halaman**.
+
+| Kategori | Contoh Fitur | Implementasi |
+|---|---|---|
+| **URL-Based** | \`URLLength\`, \`NoOfSubDomain\`, \`IsHTTPS\` | Analisis string URL langsung. |
+| **Content-Based** | \`NoOfImage\`, \`NoOfiFrame\`, \`HasPasswordField\` | Parsing HTML menggunakan DOMParser. |
+| **Statistical** | \`URLCharProb\` | Diaproksimasi menggunakan entropi karakter. |
+
+*(Versi Dokumen: Updated for Mermaid Fix)*
+
+## 4. Struktur File Proyek
+
+\`\`\`
+GuardNet/
+├── manifest.json       # Konfigurasi ekstensi (Manifest V3)
+├── scan.html           # Antarmuka pengguna (UI)
+├── scan.js             # Logika UI & komunikasi dengan sandbox
+├── sandbox.html        # Halaman terisolasi untuk menjalankan TensorFlow.js
+├── sandbox.js          # Logika ekstraksi fitur & prediksi model
+├── background.js       # Service worker (jika diperlukan untuk ekspansi)
+├── libs/
+│   └── tf.min.js       # Library TensorFlow.js (offline)
+└── models/             # File model ML
+    ├── model.json
+    └── group1-shard1of1.bin
+\`\`\`
+
+## 5. Panduan Pengujian (Walkthrough)
+
+1.  **Instalasi**:
+    *   Buka \`chrome://extensions/\` di browser Chrome.
+    *   Aktifkan **Developer mode** (pojok kanan atas).
+    *   Klik **Load unpacked** dan pilih folder \`GuardNet\`.
+
+2.  **Cara Menggunakan**:
+    *   Buka website apa saja (contoh: \`google.com\` atau website test phishing).
+    *   Klik ikon **GuardNet** di toolbar browser.
+    *   Klik tombol **Scan Current Tab**.
+    *   Tunggu hasil analisis (Aman/Phishing).
+
+3.  **Troubleshooting**:
+    *   Jika muncul error "Model bad input", pastikan format \`model.json\` menggunakan \`batch_input_shape\`.
+    *   Jika skor selalu sama (~63%), berarti ekstraksi fitur belum berjalan (masih dummy). Pastikan \`sandbox.js\` terbaru sudah terpasang.
+
+## 6. Catatan Keamanan
+Ekstensi ini menggunakan izin \`activeTab\` dan \`scripting\` hanya saat pengguna mengklik tombol scan, menjaga privasi pengguna dengan tidak memindai secara otomatis di latar belakang tanpa izin.
+`;
+
+        // Render Markdown Parts
+        const html1 = marked.parse(markdownPart1);
+        const html2 = marked.parse(markdownPart2);
+
+        // Mermaid Graph
+        const mermaidGraph = `
+<div class="mermaid">
+graph TD
+    User["User Membuka Web"] -->|Klik Ikon| Popup["Popup UI (scan.html)"]
+    Popup -->|"Klik Scan"| Logic["Popup Logic (scan.js)"]
+    Logic -->|"1. Ambil HTML"| Tab["Konten Tab Aktif"]
+    Tab -->|"Kembalikan String HTML"| Logic
+    Logic -->|"2. Kirim Data (URL, HTML)"| Iframe["Sandbox Iframe (Hidden)"]
+    Iframe -->|"3. Ekstraksi 50 Fitur"| Extractor["Feature Extractor (sandbox.js)"]
+    Extractor -->|"Input 50 Fitur"| TFJS["TensorFlow.js Model"]
+    TFJS -->|"Skor Prediksi"| Iframe
+    Iframe -->|"4. Kirim Hasil"| Logic
+    Logic -->|"5. Update UI"| UIResult["Hasil: Aman / Phishing"]
+</div>
+`;
+
+        // Combine
+        document.getElementById('content').innerHTML = html1 + mermaidGraph + html2;
+
+        // Initialize Mermaid
+        mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GuardNet V.01 - Memindai...</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 50px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .url-display {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-family: 'Consolas', monospace;
+            font-size: 14px;
+            word-break: break-all;
+            margin: 20px 0;
+            color: #a0c4ff;
+            max-height: 80px;
+            overflow-y: auto;
+        }
+
+        /* Scanning State */
+        .scanning-state .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-top-color: #4fc3f7;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 30px auto;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .scanning-state .status-text {
+            color: #a0c4ff;
+            font-size: 18px;
+        }
+
+        /* Result States */
+        .result-state {
+            display: none;
+        }
+
+        .result-state.active {
+            display: block;
+        }
+
+        .result-icon {
+            font-size: 80px;
+            margin: 20px 0;
+        }
+
+        .result-title {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        /* Safe - Green */
+        .result-safe .result-icon {
+            color: #4caf50;
+        }
+
+        .result-safe .result-title {
+            color: #81c784;
+        }
+
+        /* Warning - Yellow */
+        .result-warning .result-icon {
+            color: #ff9800;
+        }
+
+        .result-warning .result-title {
+            color: #ffb74d;
+        }
+
+        /* Phishing - Red */
+        .result-phishing .result-icon {
+            color: #f44336;
+        }
+
+        .result-phishing .result-title {
+            color: #ef5350;
+        }
+
+        .result-description {
+            color: #b0bec5;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .confidence-bar {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            height: 20px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .confidence-fill.safe {
+            background: linear-gradient(90deg, #4caf50, #81c784);
+        }
+
+        .confidence-fill.warning {
+            background: linear-gradient(90deg, #ff9800, #ffb74d);
+        }
+
+        .confidence-fill.phishing {
+            background: linear-gradient(90deg, #f44336, #e57373);
+        }
+
+        .confidence-text {
+            font-size: 14px;
+            color: #90a4ae;
+            margin-bottom: 20px;
+        }
+
+        .risk-score {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .risk-score.safe {
+            color: #81c784;
+        }
+
+        .risk-score.warning {
+            color: #ffb74d;
+        }
+
+        .risk-score.phishing {
+            color: #ef5350;
+        }
+
+        /* Buttons */
+        .actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4caf50, #81c784);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ff9800, #ffb74d);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 152, 0, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-danger {
+            background: transparent;
+            color: #ef5350;
+            border: 1px solid #ef5350;
+        }
+
+        .btn-danger:hover {
+            background: rgba(239, 83, 80, 0.1);
+        }
+
+        .btn-trust {
+            background: linear-gradient(135deg, #2196f3, #64b5f6);
+            color: white;
+        }
+
+        .btn-trust:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(33, 150, 243, 0.4);
+        }
+
+        /* Error State */
+        .error-state {
+            display: none;
+        }
+
+        .error-state.active {
+            display: block;
+        }
+
+        .error-state .result-icon {
+            color: #ff9800;
+        }
+
+        /* Risk Legend */
+        .risk-legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+            font-size: 12px;
+            color: #78909c;
+        }
+
+        .risk-legend span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .legend-dot.green {
+            background: #4caf50;
+        }
+
+        .legend-dot.yellow {
+            background: #ff9800;
+        }
+
+        .legend-dot.red {
+            background: #f44336;
+        }
+
+        /* Hidden */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="logo">🛡️</div>
+        <h1>GuardNet V.01 Security Check</h1>
+
+        <div class="url-display" id="target-url">Loading...</div>
+
+        <!-- Scanning State -->
+        <div class="scanning-state" id="scanning-state">
+            <div class="spinner"></div>
+            <p class="status-text">Menganalisis keamanan website...</p>
+        </div>
+
+        <!-- Safe Result (0-25%) -->
+        <div class="result-state result-safe" id="result-safe">
+            <div class="result-icon">✅</div>
+            <h2 class="result-title">Website Aman</h2>
+            <p class="result-description">Analisis AI kami menunjukkan website ini memiliki risiko phishing yang
+                <strong>rendah</strong>.
+            </p>
+            <div class="risk-score safe" id="safe-score">0%</div>
+            <p class="confidence-text">Skor Risiko Phishing</p>
+            <div class="confidence-bar">
+                <div class="confidence-fill safe" id="safe-confidence-bar"></div>
+            </div>
+            <div class="risk-legend">
+                <span>
+                    <div class="legend-dot green"></div> 0-25% Aman
+                </span>
+                <span>
+                    <div class="legend-dot yellow"></div> 26-50% Waspada
+                </span>
+                <span>
+                    <div class="legend-dot red"></div> 51-100% Bahaya
+                </span>
+            </div>
+            <div class="actions">
+                <button class="btn-primary" id="proceed-safe">🚀 Lanjutkan ke Website</button>
+                <button class="btn-secondary" id="back-safe">← Kembali</button>
+            </div>
+        </div>
+
+        <!-- Warning Result (26-50%) -->
+        <div class="result-state result-warning" id="result-warning">
+            <div class="result-icon">⚠️</div>
+            <h2 class="result-title">Waspada - Risiko Menengah</h2>
+            <p class="result-description">Website ini memiliki beberapa karakteristik mencurigakan.
+                <strong>Berhati-hatilah</strong> dan jangan masukkan data sensitif.
+            </p>
+            <div class="risk-score warning" id="warning-score">0%</div>
+            <p class="confidence-text">Skor Risiko Phishing</p>
+            <div class="confidence-bar">
+                <div class="confidence-fill warning" id="warning-confidence-bar"></div>
+            </div>
+            <div class="risk-legend">
+                <span>
+                    <div class="legend-dot green"></div> 0-25% Aman
+                </span>
+                <span>
+                    <div class="legend-dot yellow"></div> 26-50% Waspada
+                </span>
+                <span>
+                    <div class="legend-dot red"></div> 51-100% Bahaya
+                </span>
+            </div>
+            <div class="actions">
+                <button class="btn-warning" id="proceed-warning">⚠️ Lanjutkan dengan Hati-hati</button>
+                <button class="btn-secondary" id="back-warning">← Kembali</button>
+            </div>
+        </div>
+
+        <!-- Phishing Result (51-100%) -->
+        <div class="result-state result-phishing" id="result-phishing">
+            <div class="result-icon">🚫</div>
+            <h2 class="result-title">Bahaya - Phishing Terdeteksi!</h2>
+            <p class="result-description">Website ini memiliki karakteristik situs phishing yang berbahaya. Kami sangat
+                menyarankan untuk <strong>TIDAK melanjutkan</strong>.</p>
+            <div class="risk-score phishing" id="phishing-score">0%</div>
+            <p class="confidence-text">Skor Risiko Phishing</p>
+            <div class="confidence-bar">
+                <div class="confidence-fill phishing" id="phishing-confidence-bar"></div>
+            </div>
+            <div class="risk-legend">
+                <span>
+                    <div class="legend-dot green"></div> 0-25% Aman
+                </span>
+                <span>
+                    <div class="legend-dot yellow"></div> 26-50% Waspada
+                </span>
+                <span>
+                    <div class="legend-dot red"></div> 51-100% Bahaya
+                </span>
+            </div>
+            <div class="actions">
+                <button class="btn-secondary" id="back-phishing">← Kembali ke Aman</button>
+                <button class="btn-danger" id="proceed-phishing">⚠️ Lanjutkan (Risiko Tinggi)</button>
+            </div>
+        </div>
+
+        <!-- Error State -->
+        <div class="error-state" id="error-state">
+            <div class="result-icon">⚠️</div>
+            <h2 class="result-title" style="color: #ff9800;">Tidak Dapat Menganalisis</h2>
+            <p class="result-description" id="error-message">Terjadi kesalahan saat menganalisis website.</p>
+            <div class="actions">
+                <button class="btn-primary" id="proceed-error">🚀 Lanjutkan Saja</button>
+                <button class="btn-secondary" id="back-error">← Kembali</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sandbox iframe for TensorFlow.js -->
+    <iframe id="sandbox-frame" src="sandbox.html" style="display: none;"></iframe>
+
+    <script src="scan.js"></script>
+</body>
+
+</html>

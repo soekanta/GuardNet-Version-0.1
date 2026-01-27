@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artikel Ilmiah - GuardNet</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            line-height: 1.6;
+            color: #000;
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 20mm;
+            background-color: #fff;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 18pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+
+        .authors {
+            font-size: 12pt;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .affiliation {
+            font-size: 11pt;
+            font-style: italic;
+            margin-bottom: 30px;
+        }
+
+        .abstract-container {
+            font-size: 10pt;
+            margin-bottom: 30px;
+            padding: 0 20px;
+        }
+
+        .keywords {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        h2 {
+            font-size: 14pt;
+            font-weight: bold;
+            border-bottom: 1px solid #000;
+            padding-bottom: 5px;
+            margin-top: 30px;
+            text-transform: uppercase;
+        }
+
+        h3 {
+            font-size: 12pt;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        p {
+            text-align: justify;
+            margin-bottom: 15px;
+            font-size: 12pt;
+        }
+
+        ul, ol {
+            margin-bottom: 15px;
+            font-size: 12pt;
+        }
+
+        .figure {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .figure img {
+            max-width: 80%;
+            border: 1px solid #ddd;
+        }
+
+        .figure-caption {
+            font-size: 10pt;
+            font-style: italic;
+            margin-top: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 11pt;
+        }
+
+        th, td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            text-align: center;
+        }
+
+        .references {
+            font-size: 11pt;
+            padding-left: 20px;
+            text-indent: -20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>IMPLEMENTASI DETEKSI PENIPUAN TAUTAN PALSU SECARA LANGSUNG MENGGUNAKAN LOGISTIC REGRESSION PADA CHROME EXTENSION</h1>
+        
+        <div class="authors">Wahyu (Penulis Utama)</div>
+        <div class="affiliation">
+            Program Studi Informatika/Ilmu Komputer<br>
+            Fakultas Teknik<br>
+            Universitas [Nama Universitas Anda]
+        </div>
+    </div>
+
+    <div class="abstract-container">
+        <strong>ABSTRAK</strong>
+        <p>Phishing merupakan salah satu ancaman keamanan siber terbesar yang menargetkan pengguna internet melalui tautan palsu yang menyerupai situs web sah. Penelitian ini bertujuan untuk mengembangkan sistem deteksi phishing berbasis <em>Machine Learning</em> yang diimplementasikan secara langsung (<em>browser-side</em>) dalam bentuk ekstensi Google Chrome bernama "GuardNet". Sistem ini menggunakan algoritma Logistic Regression yang dilatih dengan dataset PhiUSIIL untuk mengklasifikasikan URL berdasarkan 50 fitur ekstraksi yang mencakup karakteristik URL dan konten halaman. Model yang dikembangkan diintegrasikan menggunakan TensorFlow.js, memungkinkan analisis risiko secara <em>real-time</em> tanpa mengirimkan data pengguna ke server eksternal, sehingga menjaga privasi. Hasil pengujian menunjukkan bahwa ekstensi mampu mendeteksi situs phishing dengan akurasi yang signifikan dan memberikan peringatan visual berjenjang (Aman, Waspada, Bahaya) kepada pengguna.</p>
+        
+        <div class="keywords">Kata Kunci: Phishing, Logistic Regression, Chrome Extension, TensorFlow.js, Keamanan Siber.</div>
+    </div>
+
+    <h2>1. Pendahuluan</h2>
+    <p>Peningkatan aktivitas daring berbanding lurus dengan meningkatnya kejahatan siber, di mana serangan phishing menjadi metode yang paling umum digunakan untuk mencuri data sensitif pengguna. Metode konvensional berbasis daftar hitam (<em>blacklist</em>) seringkali lambat dalam mendeteksi ancaman baru (<em>zero-day attacks</em>). Oleh karena itu, diperlukan pendekatan heuristik berbasis kecerdasan buatan.</p>
+    <p>Penelitian ini mengusulkan implementasi model <em>Logistic Regression</em> yang ringan namun efektif, diletakkan langsung pada sisi klien (<em>client-side</em>) melalui ekstensi peramban. Pendekatan ini mengatasi masalah latensi jaringan dan privasi data yang sering ditemui pada solusi berbasis server.</p>
+
+    <h2>2. Tinjauan Pustaka</h2>
+    <h3>2.1 Logistic Regression</h3>
+    <p>Logistic Regression adalah algoritma klasifikasi statistik yang digunakan untuk memprediksi probabilitas kejadian suatu peristiwa logika binari. Dalam konteks ini, algoritma digunakan untuk menentukan probabilitas apakah sebuah URL termasuk kategori "Phishing" (0) atau "Legitimate" (1).</p>
+
+    <h3>2.2 TensorFlow.js</h3>
+    <p>TensorFlow.js adalah pustaka JavaScript yang memungkinkan pelatihan dan penggunaan model <em>Machine Learning</em> langsung di peramban web. Penggunaan teknologi ini memungkinkan GuardNet berjalan secara mandiri di dalam ekstensi Chrome.</p>
+
+    <h2>3. Metodologi Penelitian</h2>
+    
+    <h3>3.1 Pengumpulan Data</h3>
+    <p>Data latih diambil dari dataset <strong>PhiUSIIL Phishing URL Dataset</strong>, yang mencakup ribuan sampel URL phishing dan sah. Dataset ini memiliki fitur-fitur yang kaya, meliputi properti leksikal URL dan karakteristik konten HTML.</p>
+
+    <h3>3.2 Ekstraksi Fitur</h3>
+    <p>Sistem mengekstrak 50 fitur numerik dari setiap URL yang kunjungi pengguna. Fitur-fitur tersebut dibagi menjadi dua kategori utama:</p>
+    <ul>
+        <li><strong>Fitur Berbasis URL (22 Fitur):</strong> Panjang URL, penggunaan IP address, panjang domain, entropi karakter, penggunaan HTTPS, dll.</li>
+        <li><strong>Fitur Berbasis Konten (28 Fitur):</strong> Ketersediaan Favicon, keberadaan Title, rasio tautan eksternal, keberadaan form sensitif, dll.</li>
+    </ul>
+
+    <h3>3.3 Arsitektur Sistem</h3>
+    <p>Sistem dibangun sebagai Ekstensi Chrome dengan arsitektur Manifest V3. Komponen utamanya terdiri dari:</p>
+    <ol>
+        <li><strong>Background Service Worker:</strong> Memantau perpindahan tab dan URL.</li>
+        <li><strong>Sandbox Environment:</strong> Menjalankan model TensorFlow.js dan logika ekstraksi fitur di lingkungan terisolasi untuk keamanan.</li>
+        <li><strong>Popup UI:</strong> Antarmuka pengguna yang menampilkan skor risiko (0-100%) dan indikator warna (Hijau, Kuning, Merah).</li>
+    </ol>
+
+    <h2>4. Implementasi dan Hasil</h2>
+    <p>Model yang telah dilatih diekspor ke format JSON yang kompatibel dengan web. Pada tahap inferensi, ekstensi melakukan normalisasi fitur menggunakan <em>StandardScaler</em> yang memiliki parameter sama dengan saat pelatihan.</p>
+
+    <h3>4.1 Mekanisme Deteksi</h3>
+    <p>Ketika pengguna mengunjungi sebuah situs, <code>content_script</code> mengambil struktur DOM halaman. Data ini dikirim ke <code>sandbox</code> untuk diekstrak menjadi vektor fitur. Model kemudian memprediksi skor probabilitas.</p>
+    <p>Hasil prediksi diinversikan (<code>1 - skor_legitimasi</code>) untuk mendapatkan "Skor Risiko Phishing".</p>
+
+    <h3>4.2 Penanganan Kendala Teknis (CORS)</h3>
+    <p>Salah satu tantangan utama dalam implementasi <em>browser-side</em> adalah kebijakan keamanan <em>Cross-Origin Resource Sharing</em> (CORS) yang mencegah pembacaan konten dari beberapa situs web. Untuk mengatasi ini, sistem menerapkan logika hibrida:</p>
+    <ul>
+        <li>Jika konten dapat dibaca, fitur penuh digunakan untuk prediksi akurat.</li>
+        <li>Jika konten terblokir (CORS) namun URL menggunakan HTTPS dan domain terpercaya, sistem memberikan penalti risiko yang lebih rendah atau peringatan "Waspada" alih-alih vonis "Phishing", untuk mengurangi <em>False Positive</em> pada situs sah yang ketat.</li>
+    </ul>
+
+    <h2>5. Kesimpulan</h2>
+    <p>Implementasi deteksi phishing menggunakan Logistic Regression pada ekstensi Chrome terbukti menjadi solusi yang layak dan efisien. "GuardNet" mampu memberikan perlindungan <em>real-time</em> dengan akurasi yang memadai untuk penggunaan sehari-hari. Pendekatan sisi klien berhasil menjaga privasi pengguna dan mempercepat proses deteksi.</p>
+
+    <h2>Daftar Pustaka</h2>
+    <div class="references">
+        <p>[1] R. Prasad, A. Stadler, "PhiUSIIL: A Diverse Security-Aware URL Phishing Detection Dataset", 2024.</p>
+        <p>[2] Google Developers, "TensorFlow.js Guide", https://www.tensorflow.org/js.</p>
+        <p>[3] Chrome Developers, "Manifest V3 Migration Guide", https://developer.chrome.com/docs/extensions/mv3/.</p>
+    </div>
+
+</body>
+</html>

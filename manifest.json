@@ -1,0 +1,24 @@
+{
+    "manifest_version": 3,
+    "name": "GuardNet Phishing Detector",
+    "version": "1.1",
+    "description": "Detect phishing URLs using Machine Learning - Real-time Protection",
+    "permissions": [
+        "activeTab",
+        "scripting",
+        "offscreen",
+        "webNavigation"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "sandbox": {
+        "pages": [
+            "sandbox.html"
+        ]
+    },
+    "content_security_policy": {
+        "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'",
+        "sandbox": "sandbox allow-scripts allow-forms; script-src 'self' 'unsafe-eval' 'wasm-unsafe-eval'; object-src 'self'"
+    }
+}
