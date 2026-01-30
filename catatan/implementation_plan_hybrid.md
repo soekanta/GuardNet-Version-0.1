@@ -230,12 +230,4 @@ models/
 >
 > Untuk tahap implementasi awal, saya akan membuat struktur kode dan **placeholder RF model** dengan beberapa decision trees hardcoded. Model RF yang optimal memerlukan training terpisah.
 
----
 
-## Pertanyaan untuk User
-
-1. Apakah Anda memiliki preferensi untuk strategi voting default? (`weighted_average`, `max_confidence`, atau `unanimous`)
-
-2. Apakah Anda ingin saya juga membuat script Python untuk training Random Forest dan mengexport ke JSON?
-
-3. Berapa jumlah estimator (trees) maksimal yang Anda inginkan? (Saya rekomendasikan 10-15 untuk balance performa dan akurasi)
