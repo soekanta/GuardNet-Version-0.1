@@ -42,7 +42,7 @@ graph TD
 
 ### Detail Teknis
 Untuk detail implementasi teknis yang mendalam, silakan baca dokumen perencanaan kami:
-👉 **[Lihat Rencana Implementasi Hybrid (Detail)](https://htmlpreview.github.io/?https://github.com/soekanta/GuardNet-Version-0.1/blob/main/catatan/implementation_plan_hybrid.html)**
+👉 **[Lihat Rencana Implementasi Hybrid (Detail)](https://htmlpreview.github.io/?https://github.com/soekanta/GuardNet-Version-0.1/blob/master/catatan/implementation_plan_hybrid.html)**
 
 ---
 
