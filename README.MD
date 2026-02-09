@@ -58,15 +58,65 @@ Proyek ini dikembangkan dengan dedikasi tinggi oleh:
 
 ## 📦 Panduan Instalasi (Development)
 
-1.  **Clone Repository**
-    ```bash
-    git clone https://github.com/soekanta/GuardNet-Version-0.1.git
-    ```
-2.  **Load di Chrome**
-    *   Buka `chrome://extensions/`
-    *   Aktifkan "Developer mode" (pojok kanan atas).
-    *   Klik "Load unpacked" dan pilih folder project ini.
-3.  **Selesai!** GuardNet siap melindungi Anda.
+### Langkah 1: Install Git (Jika Belum Ada)
+
+Anda bisa menggunakan salah satu dari opsi berikut:
+
+**Opsi A: Git for Windows** (Recommended)
+- Download dari [git-scm.com](https://git-scm.com/download/win)
+- Install dengan pengaturan default
+- Setelah install, Anda bisa gunakan **Git Bash**, **Git CMD**, atau **PowerShell**
+
+**Opsi B: GitHub Desktop** (Untuk Pemula)
+- Download dari [desktop.github.com](https://desktop.github.com/)
+- Interface grafis yang lebih mudah digunakan
+- Tidak perlu mengetik command
+
+### Langkah 2: Clone Repository
+
+**Menggunakan Git Bash / Git CMD / PowerShell:**
+```bash
+git clone https://github.com/soekanta/GuardNet-Version-0.1.git
+```
+
+**Menggunakan GitHub Desktop:**
+1. Klik `File` → `Clone Repository`
+2. Pilih tab `URL`
+3. Paste: `https://github.com/soekanta/GuardNet-Version-0.1.git`
+4. Pilih lokasi penyimpanan
+5. Klik `Clone`
+
+**Hasil Setelah Clone:**
+Anda akan mendapatkan folder `GuardNet-Version-0.1` yang berisi:
+```
+GuardNet-Version-0.1/
+├── manifest.json          # Konfigurasi extension
+├── background.js          # Service worker
+├── scan.html & scan.js    # UI scanning
+├── sandbox.js             # AI engine
+├── random_forest.js       # Random Forest model
+├── models/                # Model AI (TensorFlow.js & RF)
+├── icons/                 # Icon extension
+└── catatan/               # Dokumentasi
+```
+
+### Langkah 3: Load Extension di Chrome
+
+1. Buka Chrome dan ketik di address bar: `chrome://extensions/`
+2. **Aktifkan "Developer mode"** (toggle di pojok kanan atas)
+3. Klik tombol **"Load unpacked"**
+4. Pilih folder `GuardNet-Version-0.1` yang baru saja di-clone
+5. **Selesai!** Icon GuardNet 🛡️ akan muncul di toolbar Chrome
+
+### Langkah 4: Verifikasi Instalasi
+
+- Klik icon GuardNet di toolbar
+- Buka website apapun (contoh: `google.com`)
+- Klik tombol **"Scan URL"**
+- Anda akan melihat hasil analisis dengan status warna:
+  - 🟢 **Hijau** = Aman (0-25%)
+  - 🟡 **Kuning** = Waspada (26-50%)
+  - 🔴 **Merah** = Bahaya (>50%)
 
 ---
 
