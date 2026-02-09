@@ -50,9 +50,9 @@ Untuk detail implementasi teknis yang mendalam, silakan baca dokumen perencanaan
 
 Proyek ini dikembangkan dengan dedikasi tinggi oleh:
 
-*   **Wahyu Soekanta Ginting** - *Lead Developer & AI Researcher*
-*   **Katrin Wijaya** - *Frontend Engineer*
-*   **Nuragustyani** - *Data Analyst*
+*   **Wahyu Soekanta Ginting** 
+*   **Katrin Wijaya** 
+*   **Nuragustyani** 
 
 ---
 
