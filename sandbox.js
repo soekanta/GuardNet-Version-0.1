@@ -800,11 +800,6 @@ async function predict(url, content) {
 
     finalScore = (calibrated * multiplier) + adjustment;
 
-    // Add small random noise (±2%) to prevent identical scores for similar URLs
-    // This creates the "33%, 37%, 43%" variance user asked for
-    const noise = (Math.random() * 0.04) - 0.02;
-    finalScore += noise;
-
     // Clamp to 0.02-0.98
     finalScore = Math.max(0.02, Math.min(0.98, finalScore));
 
