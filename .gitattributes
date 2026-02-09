@@ -1,0 +1,11 @@
+# Exclude documentation HTML files from language statistics
+catatan/*.html linguist-documentation
+model_features_comparison.html linguist-documentation
+
+# Exclude Jupyter notebooks from language statistics (optional)
+*.ipynb linguist-documentation
+
+# Mark actual extension HTML files as vendored to reduce their weight
+# but still count them (they're small anyway)
+# offscreen.html linguist-vendored
+# sandbox.html linguist-vendored
