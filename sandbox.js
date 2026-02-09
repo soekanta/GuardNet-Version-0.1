@@ -11,7 +11,7 @@ const HYBRID_CONFIG = {
     strategy: 'weighted_average', // 'weighted_average', 'max_confidence', 'unanimous'
     lrWeight: 0.5,    // Weight for Logistic Regression (0-1)
     rfWeight: 0.5,    // Weight for Random Forest (0-1)
-    RF_ENABLED: false // DISABLED - needs dataset retraining
+    RF_ENABLED: true  // ENABLED - Hybrid Detection Mode
 };
 
 // Load the model
