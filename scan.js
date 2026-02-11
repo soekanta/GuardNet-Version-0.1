@@ -156,7 +156,7 @@ document.getElementById('back-warning').addEventListener('click', () => window.h
 
 // Button handlers - Phishing
 document.getElementById('proceed-phishing').addEventListener('click', () => {
-    if (confirm('🚫 PERINGATAN KERAS!\n\nWebsite ini kemungkinan besar adalah situs PHISHING berbahaya!\n\nMelanjutkan dapat menyebabkan:\n• Pencurian data pribadi\n• Pencurian password\n• Kerugian finansial\n\nApakah Anda BENAR-BENAR yakin ingin melanjutkan?')) {
+    if (confirm('🚫 PERINGATAN KERAS!\n\nWebsite ini memiliki karakteristik yang MIRIP dengan situs phishing!\n\nMelanjutkan dapat berisiko:\n• Pencurian data pribadi\n• Pencurian password\n• Kerugian finansial\n\nApakah Anda BENAR-BENAR yakin ingin melanjutkan?')) {
         proceedToUrl();
     }
 });
