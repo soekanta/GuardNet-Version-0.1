@@ -23,7 +23,7 @@ GuardNet V.01 menggunakan pendekatan dua tahap yang unik untuk menentukan keaman
 
 ```mermaid
 graph TD
-    User["🌐 User Membuka Web"] --> Extractor["🔍 Ekstraksi 50 Fitur (URL & Konten)"]
+    User["🌐 User Membuka Web"] --> Extractor["🔍 Ekstraksi 22 Fitur (URL & Konten)"]
     
     Extractor --> Normalizer["⚖️ Normalisasi Data (StandardScaler)"]
     
